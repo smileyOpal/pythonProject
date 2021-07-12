@@ -1,6 +1,8 @@
 import codecs
 import csv
 import os.path
+import math
+import constants
 
 
 def read_csv_file(file_path, headers=[], has_header=True):
@@ -53,6 +55,19 @@ def write_result_to_file(dict_data, csv_file_name, subdirectory='result', header
     return
 
 
+def split_files(file_path):
+    read_file = read_csv_file(file_path)
+    data_length = len(read_file)
+    no_files = int(math.ceil(float(data_length) / constants.default_file_size)) + 1
+
+    start = 0
+    for i in range(1, no_files):
+        end = constants.default_file_size * i
+        write_result_to_file(read_file[start:end], 'result_{0}.csv'.format(i), 'result', get_dict_header(read_file))
+        start = end
+
+
 if __name__ == '__main__':
     read = read_csv_file('sample.csv')
     print read
+    split_files('sample.csv')
